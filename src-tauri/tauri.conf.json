@@ -1,0 +1,30 @@
+{
+  "productName": "Safesecrets",
+  "version": "0.1.0",
+  "identifier": "com.safesecrets.dev",
+  "build": {
+    "frontendDist": "../dist",
+    "devUrl": "http://localhost:3744",
+    "beforeDevCommand": "npm run dev",
+    "beforeBuildCommand": "npm run build"
+  },
+  "app": {
+    "security": {
+      "csp": null
+    },
+    "windows": [
+      {
+        "title": "Safesecrets",
+        "width": 1000,
+        "height": 700,
+        "resizable": true,
+        "fullscreen": false
+      }
+    ]
+  },
+  "bundle": {
+    "active": true,
+    "targets": "all",
+    "icon": ["icons/icon.icns"]
+  }
+}
