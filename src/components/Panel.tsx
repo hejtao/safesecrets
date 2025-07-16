@@ -229,11 +229,6 @@ const Panel: React.FC<PanelProps> = ({}) => {
             {hasEmail && (
               <div className='icon-wrapper'>
                 <span style={{ color: 'red', fontSize: 12 }}>{panelData.email}</span>
-                <img
-                  style={{ width: 16, flexShrink: 0, marginLeft: 4 }}
-                  src={lockIcon}
-                  alt='lock icon'
-                />
               </div>
             )}
           </div>
