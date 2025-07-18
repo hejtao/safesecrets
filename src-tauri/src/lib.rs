@@ -74,6 +74,10 @@ fn add_secrets(
     if push_to_cloud == "yes" {
         let _ = Command::new(get_git_cmd()?)
             .args(["pull", "--rebase"])
+            .env(
+                "GIT_SSH_COMMAND",
+                "ssh -o StrictHostKeyChecking=accept-new -o UserKnownHostsFile=/dev/null",
+            )
             .output();
 
         let mut args = vec!["push"];
@@ -81,20 +85,13 @@ fn add_secrets(
             args = vec!["push", "-u", "origin", "main"];
         }
 
-        let mut child = Command::new(get_git_cmd()?)
+        let output = Command::new(get_git_cmd()?)
             .args(args)
-            .stdin(std::process::Stdio::piped())
-            .stdout(std::process::Stdio::piped())
-            .stderr(std::process::Stdio::piped())
-            .spawn()
-            .map_err(|e| format!("Failed to execute git command: {}", e))?;
-
-        if let Some(stdin) = child.stdin.as_mut() {
-            let _ = stdin.write_all(b"yes\n");
-        }
-
-        let output = child
-            .wait_with_output()
+            .env(
+                "GIT_SSH_COMMAND",
+                "ssh -o StrictHostKeyChecking=accept-new -o UserKnownHostsFile=/dev/null",
+            )
+            .output()
             .map_err(|e| format!("Failed to execute git command: {}", e))?;
 
         if !output.status.success() {
