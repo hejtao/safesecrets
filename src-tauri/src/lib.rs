@@ -72,7 +72,11 @@ fn add_secrets(
 
     // 推送到云端
     if push_to_cloud == "yes" {
-        let mut args = vec!["push", "--force"];
+        let _ = Command::new(get_git_cmd()?)
+            .args(["pull", "--rebase"])
+            .output();
+
+        let mut args = vec!["push"];
         if !git_upstream_exists()? {
             args = vec!["push", "-u", "origin", "main"];
         }
