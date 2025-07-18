@@ -57,7 +57,7 @@ const List: React.FC<ListProps> = ({}) => {
       setListItems(listItems.filter((item) => item.id !== id));
       showSuccess(`Delete secrets ${id} successfully`);
     } catch (error: any) {
-      showError(error || 'Failed to delete secrets');
+      showError(error);
     } finally {
       setIsDeleting(false);
     }
@@ -71,7 +71,7 @@ const List: React.FC<ListProps> = ({}) => {
       setDecryptionContent(msg);
       setIsDecryptionOpen(true);
     } catch (error: any) {
-      showError(error || 'Failed to decrypt secrets');
+      showError(error);
     } finally {
       setIsDecrypting(false);
     }
@@ -141,11 +141,17 @@ const List: React.FC<ListProps> = ({}) => {
       showError('Please set your GPG Email and Secret Question first');
       return;
     }
-    setIsSearching(true);
-    await loadListItems(searchStr);
-    showSuccess('Search secrets successfully');
-    setSearchStr('');
-    setIsSearching(false);
+
+    try {
+      setIsSearching(true);
+      await loadListItems(searchStr);
+      showSuccess('Search secrets successfully');
+      setSearchStr('');
+    } catch (error: any) {
+      showError(error);
+    } finally {
+      setIsSearching(false);
+    }
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
@@ -164,30 +170,21 @@ const List: React.FC<ListProps> = ({}) => {
               autoComplete='on'
               value={searchStr}
               onChange={(e) => setSearchStr(e.target.value)}
+              onKeyDown={handleKeyPress}
               placeholder='Search'
             />
             {isSearching ? (
-              <div className='spinner'></div>
+              <div className='spinner' style={{ marginRight: 5 }}></div>
             ) : (
               <img
                 title='Search'
                 src={searchIcon}
                 alt='search icon'
                 onClick={handleSearch}
-                onKeyDown={handleKeyPress}
                 style={{ width: 20, flexShrink: 0, marginRight: 5, cursor: 'pointer' }}
               />
             )}
           </div>
-
-          {/* <button
-            type='button'
-            className='search-button'
-            onClick={() => loadListItems(true)}
-            disabled={isLoading}
-          >
-            {isLoading ? 'Searching...' : 'Search'}
-          </button> */}
         </div>
         <div
           className={'list-item'}
