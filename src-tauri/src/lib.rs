@@ -9,7 +9,7 @@ use tauri::command;
 use tiny_keccak::Hasher;
 
 #[command]
-fn add_secrets(
+async fn add_secrets(
     app: String,
     desc: String,
     format: String,
@@ -17,7 +17,7 @@ fn add_secrets(
     push_to_cloud: String,
     answer: String,
 ) -> Result<(), String> {
-    let email = get_gpg_email()?;
+    let email = get_gpg_email().await?;
     let mut lines = get_index_lines()?;
     let mut file_number = 1;
     if !lines.is_empty() {
@@ -73,14 +73,14 @@ fn add_secrets(
     // 推送到云端
     if push_to_cloud == "yes" {
         let _ = Command::new(get_git_cmd()?)
-            .args(["pull", "--rebase"])
+            .args(["pull", "--rebase", "origin", "main"])
             .env(
                 "GIT_SSH_COMMAND",
                 "ssh -o StrictHostKeyChecking=accept-new -o UserKnownHostsFile=/dev/null",
             )
             .output();
 
-        let mut args = vec!["push"];
+        let mut args = vec!["push", "origin", "main"];
         if !git_upstream_exists()? {
             args = vec!["push", "-u", "origin", "main"];
         }
@@ -105,8 +105,8 @@ fn add_secrets(
 }
 
 #[command]
-fn delete_secrets(id: String) -> Result<(), String> {
-    let email = get_gpg_email()?;
+async fn delete_secrets(id: String) -> Result<(), String> {
+    let email = get_gpg_email().await?;
     let mut lines = get_index_lines()?;
     lines.retain(|line| {
         if line.len() >= 3 {
@@ -170,7 +170,7 @@ struct ListItem {
 }
 
 #[command]
-fn decrypt_secrets(id: String, answer: String) -> Result<String, String> {
+async fn decrypt_secrets(id: String, answer: String) -> Result<String, String> {
     let file = format!("./{}.gpg", id);
     if !Path::new(&file).exists() {
         return Err(format!("File {} not found", id));
@@ -232,7 +232,7 @@ fn decrypt_secrets(id: String, answer: String) -> Result<String, String> {
 }
 
 #[command]
-fn get_secrets_list(search_str: String) -> Result<Vec<ListItem>, String> {
+async fn get_secrets_list(search_str: String) -> Result<Vec<ListItem>, String> {
     let lines = get_index_lines()?;
     let mut items: Vec<ListItem> = lines
         .iter()
@@ -257,7 +257,11 @@ fn get_secrets_list(search_str: String) -> Result<Vec<ListItem>, String> {
 }
 
 #[command]
-fn add_email_and_question(email: String, question: String, answer: String) -> Result<(), String> {
+async fn add_email_and_question(
+    email: String,
+    question: String,
+    answer: String,
+) -> Result<(), String> {
     let output = Command::new(get_gpg_cmd()?)
         .args(["--list-key", &email])
         .output()
@@ -277,7 +281,7 @@ fn add_email_and_question(email: String, question: String, answer: String) -> Re
 }
 
 #[command]
-fn verify_security_question(answer: String) -> Result<bool, String> {
+async fn verify_security_question(answer: String) -> Result<bool, String> {
     let output = Command::new(get_gpg_cmd()?)
         .args(["--quiet", "--decrypt", "./answer.gpg"])
         .output()
@@ -297,7 +301,7 @@ fn verify_security_question(answer: String) -> Result<bool, String> {
 }
 
 #[command]
-fn get_gpg_email() -> Result<String, String> {
+async fn get_gpg_email() -> Result<String, String> {
     if !Path::new("./email.gpg").exists() {
         return Err("GPG email has not been set yet".to_string());
     }
@@ -317,7 +321,7 @@ fn get_gpg_email() -> Result<String, String> {
 }
 
 #[command]
-fn get_security_question() -> Result<String, String> {
+async fn get_security_question() -> Result<String, String> {
     if !Path::new("./question.gpg").exists() {
         return Err("Secret question has not been set yet".to_string());
     }
@@ -337,7 +341,7 @@ fn get_security_question() -> Result<String, String> {
 }
 
 #[command]
-fn git_repository_exists() -> Result<bool, String> {
+async fn git_repository_exists() -> Result<bool, String> {
     let output = Command::new(get_git_cmd()?)
         .args(["remote", "-v"])
         .output()
@@ -374,13 +378,13 @@ fn is_gpg_available() -> Result<bool, String> {
 }
 
 #[command]
-fn exit_app(app_handle: tauri::AppHandle) {
+async fn exit_app(app_handle: tauri::AppHandle) {
     app_handle.exit(0);
 }
 
 #[command]
-fn add_git_repository(repo: String) -> Result<(), String> {
-    let exists = git_repository_exists()?;
+async fn add_git_repository(repo: String) -> Result<(), String> {
+    let exists = git_repository_exists().await?;
     if !exists {
         let output = Command::new(get_git_cmd()?)
             .args(["remote", "add", "origin", &repo])

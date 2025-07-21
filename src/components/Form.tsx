@@ -169,7 +169,6 @@ const Form: React.FC<FormProps> = ({}) => {
   const handleEncrypt = async (answer: string) => {
     try {
       let { app, desc, format, secrets, pushToCloud, repo } = formData;
-      closeAuth();
       setIsEncrypting(true);
       app = app.trim();
       desc = desc.trim();
@@ -257,7 +256,6 @@ const Form: React.FC<FormProps> = ({}) => {
 
   const closeAuth = () => {
     setIsAuthOpen(false);
-    setIsEncrypting(false);
     setFormData({ ...formData, app: '', desc: '', secrets: '' });
   };
 
@@ -271,7 +269,6 @@ const Form: React.FC<FormProps> = ({}) => {
       return;
     }
     setIsAuthOpen(true);
-    setIsEncrypting(true);
   };
 
   const verifyAuth = async (answer: string) => {
