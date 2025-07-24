@@ -11,7 +11,7 @@ Safesecrets is a desktop application for securely storing and managing sensitive
 
 [![Watch the demo video](https://img.youtube.com/vi/Xd-GzsMoS3A/maxresdefault.jpg)](https://www.youtube.com/watch?v=Xd-GzsMoS3A)
 
-*Click the image above to watch the demo video on YouTube*
+_Click the image above to watch the demo video on YouTube_
 
 # How is your data encrypted
 
@@ -19,9 +19,17 @@ Safesecrets is a desktop application for securely storing and managing sensitive
 
 # Install
 
+## Prerequisites
+
+- [Node.js v20+](https://nodejs.org/en/download)
+- [Rust v1.80+](https://www.rust-lang.org/tools/install)
+
+## Steps
+
 ```bash
 git clone git@github.com:hejtao/safesecrets.git
 cd safesecrets
-yarn install
-yarn tauri:build
+cargo build --manifest-path ./src-tauri/Cargo.toml
+npm install
+npm run tauri:build
 ```
