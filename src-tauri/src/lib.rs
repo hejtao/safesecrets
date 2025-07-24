@@ -558,7 +558,6 @@ fn get_gpg_cmd() -> Result<String, String> {
 }
 
 fn find_gpg_path() -> Result<String, String> {
-    // macOS上GPG的常见安装路径
     let possible_paths = [
         "/opt/homebrew/bin/gpg",
         "/usr/local/bin/gpg",
@@ -583,8 +582,13 @@ fn find_gpg_path() -> Result<String, String> {
         }
     }
 
-    // 尝试使用which命令查找，只返回第一个结果
-    if let Ok(output) = Command::new("which").arg("gpg").output() {
+    #[cfg(target_os = "windows")]
+    let search_cmd = "where";
+
+    #[cfg(target_os = "macos")]
+    let search_cmd = "which";
+
+    if let Ok(output) = Command::new(search_cmd).arg("gpg").output() {
         if output.status.success() {
             let full_output = String::from_utf8_lossy(&output.stdout);
             if let Some(first_line) = full_output.lines().next() {
@@ -596,7 +600,7 @@ fn find_gpg_path() -> Result<String, String> {
         }
     }
 
-    Err("GPG not found in system, please install it".to_string())
+    Ok("".to_string())
 }
 
 static GIT_PATH_CACHE: OnceLock<Mutex<Option<String>>> = OnceLock::new();
@@ -635,8 +639,13 @@ fn find_git_path() -> Result<String, String> {
         }
     }
 
-    // 尝试使用which命令查找，只返回第一个结果
-    if let Ok(output) = Command::new("which").arg("git").output() {
+    #[cfg(target_os = "windows")]
+    let search_cmd = "where";
+
+    #[cfg(target_os = "macos")]
+    let search_cmd = "which";
+
+    if let Ok(output) = Command::new(search_cmd).arg("git").output() {
         if output.status.success() {
             let full_output = String::from_utf8_lossy(&output.stdout);
             if let Some(first_line) = full_output.lines().next() {
@@ -648,7 +657,7 @@ fn find_git_path() -> Result<String, String> {
         }
     }
 
-    Err("Git not found in system, please install it".to_string())
+    Ok("".to_string())
 }
 
 fn create_project_dir() -> Result<(), String> {
