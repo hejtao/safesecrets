@@ -566,6 +566,14 @@ fn find_gpg_path() -> Result<String, String> {
         "/opt/local/bin/gpg",
         "/usr/local/MacGPG2/bin/gpg",
         "/usr/local/bin/gpg2",
+        "C:\\Program Files (x86)\\GnuPG\\bin\\gpg.exe",
+        "C:\\Program Files\\GnuPG\\bin\\gpg.exe",
+        "C:\\Program Files (x86)\\GNU\\GnuPG\\bin\\gpg.exe",
+        "C:\\Program Files\\GNU\\GnuPG\\bin\\gpg.exe",
+        "C:\\GnuPG\\bin\\gpg.exe",
+        "C:\\Program Files\\Git\\usr\\bin\\gpg.exe",
+        "C:\\Program Files (x86)\\Git\\usr\\bin\\gpg.exe",
+        "gpg.exe",
         "gpg",
     ];
 
@@ -614,6 +622,10 @@ fn find_git_path() -> Result<String, String> {
         "/usr/local/bin/git",
         "/opt/homebrew/bin/git",
         "/opt/local/bin/git",
+        "C:\\Program Files\\Git\\bin\\git.exe",
+        "C:\\Program Files (x86)\\Git\\bin\\git.exe",
+        "C:\\Git\\bin\\git.exe",
+        "git.exe",
         "git",
     ];
 

@@ -22,7 +22,7 @@ _Click the image above to watch the demo video on YouTube_
 ## Prerequisites
 
 - [Node.js v20+](https://nodejs.org/en/download)
-- [Rust v1.80+](https://www.rust-lang.org/tools/install)
+- [Rust v1.82+](https://www.rust-lang.org/tools/install)
 
 ## Steps
 
