@@ -17,14 +17,17 @@ _Click the image above to watch the demo video on YouTube_
 
 ![Encryption Diagram](diagram.png)
 
-# Install
+# Build from source
+
+For security reasons, pre-built binaries are not provided. Safesecrets is entirely based on local storage and never interacts with any remote servers.
+We highly recommend reviewing the source code before building your own application.
 
 ## Prerequisites
 
 - [Node.js v20+](https://nodejs.org/en/download)
 - [Rust v1.82+](https://www.rust-lang.org/tools/install)
 
-## Steps
+## Steps for both windows and macOS
 
 ```bash
 git clone git@github.com:hejtao/safesecrets.git
