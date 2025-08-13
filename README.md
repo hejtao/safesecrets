@@ -3,7 +3,6 @@
 Safesecrets is a desktop application for securely storing and managing sensitive information like passwords, mnemonics, and other credentials. Built with Tauri and React, it provides:
 
 - Strong encryption for your secrets
-- Local storage - your data never leaves your device
 - Simple and intuitive interface
 - Open source and auditable code
 
