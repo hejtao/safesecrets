@@ -145,7 +145,6 @@ const List: React.FC<ListProps> = ({}) => {
     try {
       setIsSearching(true);
       await loadListItems(searchStr);
-      showSuccess('Search secrets successfully');
       setSearchStr('');
     } catch (error: any) {
       showError(error);
