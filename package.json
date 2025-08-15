@@ -8,6 +8,8 @@
     "tauri:build": "tauri build"
   },
   "dependencies": {
+    "@types/qrcode": "^1.5.5",
+    "qrcode": "^1.5.4",
     "react": "^19.1.0",
     "react-dom": "^19.1.0"
   },
