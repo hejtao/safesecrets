@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import './Decryption.css';
 import { useNotification } from '@/contexts/NotificationContext';
 import QRCode from 'qrcode';
+import qrcodeIcon from '@/static/qrcode.png';
 
 interface DecryptionProps {
   isOpen: boolean;
@@ -13,19 +14,17 @@ interface DecryptionProps {
 const Decryption: React.FC<DecryptionProps> = ({ isOpen, onClose, title, content }) => {
   if (!isOpen) return null;
 
-  const { showError, showSuccess, showInfo } = useNotification();
+  const { showError, showSuccess } = useNotification();
   const [clickCount, setClickCount] = useState(0);
   const [qrCodeDataUrl, setQrCodeDataUrl] = useState<string>('');
   const [showQrCode, setShowQrCode] = useState(false);
   const clickTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const [isCopyDisabled, setIsCopyDisabled] = useState(false);
 
   // 生成二维码
   useEffect(() => {
     const generateQRCode = async () => {
-      if (content.length > 256) {
-        showInfo(`Secret is too long, won't provide QR code`);
-        return;
-      }
+      if (content.length > 320) return;
       try {
         const dataUrl = await QRCode.toDataURL(content, {
           width: 200,
@@ -50,6 +49,7 @@ const Decryption: React.FC<DecryptionProps> = ({ isOpen, onClose, title, content
     try {
       await navigator.clipboard.writeText(content);
       showSuccess('The secrets has been copied');
+      setIsCopyDisabled(true);
     } catch (err: any) {
       showError(err?.message || 'Failed to copy decryption');
     }
@@ -82,17 +82,13 @@ const Decryption: React.FC<DecryptionProps> = ({ isOpen, onClose, title, content
   };
 
   const lines = content.split('\n');
-  const displayContent = lines.length > 8 ? lines.slice(0, 8).join('\n') + '\n...' : content;
-  const isContentTruncated = lines.length > 8;
+  const displayContent = lines.length > 10 ? lines.slice(0, 10).join('\n') + '\n...' : content;
+  const isContentTruncated = lines.length > 10;
 
   return (
     <div className='decryption-overlay' onClick={handleOverlayClick}>
       <div className='decryption'>
-        <div
-          className='decryption-header'
-          onMouseEnter={() => setShowQrCode(true)}
-          onMouseLeave={() => setShowQrCode(false)}
-        >
+        <div className='decryption-header'>
           <h3 className='decryption-title'>{title}</h3>
           <button className='decryption-close' onClick={onClose}>
             ×
@@ -100,12 +96,31 @@ const Decryption: React.FC<DecryptionProps> = ({ isOpen, onClose, title, content
         </div>
         <div className='decryption-body'>
           <div className='content-container'>
-            <pre className='content-text'>{displayContent}</pre>
+            <pre className='content-text'>
+              {showQrCode && qrCodeDataUrl ? '' : displayContent}
+            </pre>
             {showQrCode && qrCodeDataUrl && (
               <div className='qr-code-tooltip'>
                 <img src={qrCodeDataUrl} alt='QR Code' className='qr-code-image' />
                 <div className='qr-code-label'>Scan QR code to get full content</div>
               </div>
+            )}
+            {qrCodeDataUrl && (
+              <img
+                style={{
+                  width: 36,
+                  flexShrink: 0,
+                  cursor: 'pointer',
+                  position: 'absolute',
+                  bottom: 0,
+                  right: 0,
+                  zIndex: 9999,
+                }}
+                src={qrcodeIcon}
+                alt='qrcode icon'
+                onMouseEnter={() => setShowQrCode(true)}
+                onMouseLeave={() => setShowQrCode(false)}
+              />
             )}
           </div>
           {isContentTruncated && (
@@ -114,11 +129,7 @@ const Decryption: React.FC<DecryptionProps> = ({ isOpen, onClose, title, content
             </div>
           )}
         </div>
-        <div
-          className='decryption-footer'
-          onMouseEnter={() => setShowQrCode(true)}
-          onMouseLeave={() => setShowQrCode(false)}
-        >
+        <div className='decryption-footer'>
           <button
             type='button'
             className='decryption-button decryption-button-cancel'
@@ -130,6 +141,7 @@ const Decryption: React.FC<DecryptionProps> = ({ isOpen, onClose, title, content
             type='button'
             className='decryption-button decryption-button-copy'
             onClick={handleCopyClick}
+            disabled={isCopyDisabled}
           >
             Triple Click to Copy {clickCount > 0 && `(${clickCount}/3)`}
           </button>
