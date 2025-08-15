@@ -112,7 +112,7 @@ const Decryption: React.FC<DecryptionProps> = ({ isOpen, onClose, title, content
                   flexShrink: 0,
                   cursor: 'pointer',
                   position: 'absolute',
-                  bottom: 0,
+                  bottom: 8,
                   right: 0,
                   zIndex: 9999,
                 }}
