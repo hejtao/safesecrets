@@ -8,7 +8,7 @@ Safesecrets is a desktop application for securely storing and managing sensitive
 
 ## Demo Video
 
-[![Watch the demo video](https://img.youtube.com/vi/Xd-GzsMoS3A/maxresdefault.jpg)](https://www.youtube.com/watch?v=Xd-GzsMoS3A)
+[![Watch the demo video](https://img.youtube.com/vi/zg6iZG6o6M4/maxresdefault.jpg)](https://www.youtube.com/watch?v=zg6iZG6o6M4)
 
 _Click the image above to watch the demo video on YouTube_
 
