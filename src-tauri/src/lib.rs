@@ -232,7 +232,17 @@ async fn decrypt_secrets(id: String, answer: String) -> Result<String, String> {
 }
 
 #[command]
-async fn get_secrets_list(search_str: String) -> Result<Vec<ListItem>, String> {
+async fn get_secrets_list(search_str: String, pull: bool) -> Result<Vec<ListItem>, String> {
+    if pull {
+        let _ = Command::new(get_git_cmd()?)
+            .args(["pull", "--rebase", "origin", "main"])
+            .env(
+                "GIT_SSH_COMMAND",
+                "ssh -o StrictHostKeyChecking=accept-new -o UserKnownHostsFile=/dev/null",
+            )
+            .output();
+    }
+
     let lines = get_index_lines()?;
     let mut items: Vec<ListItem> = lines
         .iter()
@@ -697,14 +707,6 @@ fn start() -> Result<(), String> {
             .args(["checkout", "-b", "main"])
             .output();
     }
-
-    let _ = Command::new(get_git_cmd()?)
-            .args(["pull", "--rebase", "origin", "main"])
-            .env(
-                "GIT_SSH_COMMAND",
-                "ssh -o StrictHostKeyChecking=accept-new -o UserKnownHostsFile=/dev/null",
-            )
-            .output();
 
     Ok(())
 }

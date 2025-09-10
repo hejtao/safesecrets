@@ -40,7 +40,7 @@ const List: React.FC<ListProps> = ({}) => {
   const [isSearching, setIsSearching] = useState(false);
 
   useEffect(() => {
-    loadListItems();
+    loadListItems('', true);
   }, []);
 
   useEffect(() => {
@@ -77,10 +77,10 @@ const List: React.FC<ListProps> = ({}) => {
     }
   };
 
-  const loadListItems = async (searchStr = '') => {
+  const loadListItems = async (searchStr = '', pull = false) => {
     try {
       setIsLoading(true);
-      const data = await invoke<ListItem[]>('get_secrets_list', { searchStr });
+      const data = await invoke<ListItem[]>('get_secrets_list', { searchStr, pull });
       setListItems(data);
     } catch (error: any) {
       if (searchStr) showError(error);
@@ -144,7 +144,7 @@ const List: React.FC<ListProps> = ({}) => {
 
     try {
       setIsSearching(true);
-      await loadListItems(searchStr);
+      await loadListItems(searchStr, false);
       setSearchStr('');
     } catch (error: any) {
       showError(error);
