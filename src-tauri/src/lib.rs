@@ -660,7 +660,7 @@ fn find_git_path() -> Result<String, String> {
     Ok("".to_string())
 }
 
-fn create_project_dir() -> Result<(), String> {
+fn start() -> Result<(), String> {
     if !is_git_available()? {
         return Ok(());
     }
@@ -697,6 +697,14 @@ fn create_project_dir() -> Result<(), String> {
             .args(["checkout", "-b", "main"])
             .output();
     }
+
+    let _ = Command::new(get_git_cmd()?)
+            .args(["pull", "--rebase", "origin", "main"])
+            .env(
+                "GIT_SSH_COMMAND",
+                "ssh -o StrictHostKeyChecking=accept-new -o UserKnownHostsFile=/dev/null",
+            )
+            .output();
 
     Ok(())
 }
@@ -761,7 +769,7 @@ pub fn run() {
             verify_security_question
         ])
         .setup(|app| {
-            create_project_dir()?;
+            start()?;
             if cfg!(debug_assertions) {
                 app.handle().plugin(
                     tauri_plugin_log::Builder::default()
