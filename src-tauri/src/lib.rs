@@ -459,7 +459,7 @@ fn encrypt(recipient: &str, message: &str, output_file: &str) -> Result<(), Stri
     if let Some(stdin) = child.stdin.as_mut() {
         stdin
             .write_all(message.as_bytes())
-            .map_err(|e| format!("Failed to write to gpg symmetric stdin: {}", e))?;
+            .map_err(|e| format!("Failed to write to gpg commond: {}", e))?;
     }
 
     let output = child
